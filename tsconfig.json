@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES5",
+    "outDir": "target/",
+    "sourceMap": true,
+    "declaration": true,
+    "experimentalDecorators": true
+  },
+  "files": [
+    "src/utils/index.ts"
+  ]
+}
