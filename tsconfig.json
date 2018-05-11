@@ -8,6 +8,7 @@
     "experimentalDecorators": true
   },
   "files": [
-    "src/utils/index.ts"
+    "src/utils/index.ts",
+    "test/utils/index.ts"
   ]
 }
