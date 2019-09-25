@@ -1,88 +1,126 @@
-export class DelayTasks{
-  private tasks:{[key:string]:number};
-  private logError = false;
+export class DelayTasks {
+    private timeoutTasks: { [key: string]: number | NodeJS.Timeout };
+    private intervalTasks: { [key: string]: number | NodeJS.Timeout };
 
-  constructor(){
-    this.tasks = {};
-  }
+    private logError = false;
 
-  public addTask(taskName:string, func:Function, delay:number, repeat=false):void{
-    let self = this;
-    if (repeat){
-      self.addRepeatTask(taskName, func, delay);
-    } else {
-      self.addSimpleTask(taskName, func, delay);
+    constructor() {
+        this.timeoutTasks = {};
+        this.intervalTasks = {};
     }
-  }
 
-  public addSimpleTask(taskName:string, func:Function, delay:number):void{
-    let self = this;
-    self.tasks[taskName] = setTimeout(()=>{
-      self.endTask(taskName);
-      try {
-        func();
-      } catch(error){
-        if (self.logError){
-          console.log(`running simple task ${taskName} throws error:${error}`);
+    public addTask(
+        taskName: string,
+        func: Function,
+        delay: number,
+        repeat = false
+    ): void {
+        let self = this;
+        if (repeat) {
+            self.addRepeatTask(taskName, func, delay);
+        } else {
+            self.addSimpleTask(taskName, func, delay);
         }
-      }
-    }, delay);
-  }
-
-  public addRepeatTask(taskName:string, func:Function, delay:number):void{
-    let self = this;
-    self.tasks[taskName] = - setInterval(()=>{
-      try {
-        func();
-      } catch(error){
-        if (self.logError){
-          console.log(`running repeat task ${taskName} throws error:${error}`);
-        }
-      }
-    }, delay);
-  }
-
-  public addAwaitingTask(taskName:string, func:Function, waitingFunc:Function, delay:number):void{
-    let self = this;
-    self.addRepeatTask(taskName, ()=>{
-      let waitingFinished = false;
-      try {
-        waitingFinished = waitingFunc();
-      } catch (error){
-          if (self.logError){
-            console.log(`check awaiting task ${taskName} condition throws error:${error}`);
-          }   
-      }
-      if (waitingFinished){
-        self.endTask(taskName);
-        try {
-          func();
-        } catch (error){
-          if (self.logError){
-            console.log(`running awaiting task ${taskName} throws error:${error}`);
-          }          
-        }
-      }
-    }, delay);
-  }
-
-  public getTaskNames():string[]{
-    return Object.keys(this.tasks);
-  }
-
-  public endTask(taskName):void{
-    let id = this.tasks[taskName];
-    if (id > 0){
-      clearTimeout(id);
-    } else {
-      clearInterval(-id);
     }
-    delete this.tasks[taskName];
-  }
 
-  public endAllTasks(){
-    this.getTaskNames().forEach(taskName=>this.endTask(taskName));
-  }
+    public addSimpleTask(
+        taskName: string,
+        func: Function,
+        delay: number
+    ): void {
+        let self = this;
+        self.timeoutTasks[taskName] = setTimeout(() => {
+            self.endTask(taskName);
+            try {
+                func();
+            } catch (error) {
+                if (self.logError) {
+                    console.log(
+                        `running simple task ${taskName} throws error:${error}`
+                    );
+                }
+            }
+        }, delay);
+    }
+
+    public addRepeatTask(
+        taskName: string,
+        func: Function,
+        delay: number
+    ): void {
+        let self = this;
+        self.intervalTasks[taskName] = setInterval(() => {
+            try {
+                func();
+            } catch (error) {
+                if (self.logError) {
+                    console.log(
+                        `running repeat task ${taskName} throws error:${error}`
+                    );
+                }
+            }
+        }, delay);
+    }
+
+    public addAwaitingTask(
+        taskName: string,
+        func: Function,
+        waitingFunc: Function,
+        delay: number
+    ): void {
+        let self = this;
+        self.addRepeatTask(
+            taskName,
+            () => {
+                let waitingFinished = false;
+                try {
+                    waitingFinished = waitingFunc();
+                } catch (error) {
+                    if (self.logError) {
+                        console.log(
+                            `check awaiting task ${taskName} condition throws error:${error}`
+                        );
+                    }
+                }
+                if (waitingFinished) {
+                    self.endTask(taskName);
+                    try {
+                        func();
+                    } catch (error) {
+                        if (self.logError) {
+                            console.log(
+                                `running awaiting task ${taskName} throws error:${error}`
+                            );
+                        }
+                    }
+                }
+            },
+            delay
+        );
+    }
+
+    public getTaskNames(): string[] {
+        return [
+            ...Object.keys(this.timeoutTasks),
+            ...Object.keys(this.intervalTasks)
+        ];
+    }
+
+    public endTask(taskName): void {
+        let timeout = this.timeoutTasks[taskName];
+        if (timeout) {
+            clearTimeout(timeout as NodeJS.Timeout);
+            delete this.timeoutTasks[taskName];
+        } else {
+            timeout = this.intervalTasks[taskName];
+            clearInterval(timeout as NodeJS.Timeout);
+            delete this.intervalTasks[taskName];
+        }
+    }
+
+    public endAllTasks() {
+        this.getTaskNames().forEach(taskName => this.endTask(taskName));
+    }
 }
 
 export default DelayTasks;

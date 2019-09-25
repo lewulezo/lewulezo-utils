@@ -1,3 +1,5 @@
+import { StringBuffer } from "./StringBuffer";
+
 export class ArrayPrint{
     constructor(public titles:string[], public colDefs:C[]){
     }
@@ -157,37 +159,6 @@ function stringRightPad(str:string, len:number, padChar = ' '):string{
         output.append(padChar);
     }
     return output.toString();
-}
-
-class StringBuffer{
-    content:string[];
-
-    constructor(str=''){
-        if (str === null || str === undefined){
-            str = '';
-        }
-        this.content = [str.toString()];
-    }
-
-
-    append(str:string){
-        if (str === null || str === undefined){
-            str = '';
-        }
-        this.content.push(str.toString());
-        return this;
-    }
-
-
-    toString():string{
-        return this.content.join('');
-    }
-
-    substring(start:number, pos:number):string{
-        const str = this.toString();
-        this.content = [str.substring(start, pos)];
-        return this.toString();
-    }
 }
 
 export function getPrettyString(array:any[], colDefs:C[], titles:string[], separator=' '){
