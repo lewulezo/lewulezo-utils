@@ -32,24 +32,26 @@ class SerializeContext{
         this._items.forEach(item=>callback(item.id, item.origObj, item.convObj));
     }
 
-    getById(id:string):SerialContextItem{
-        let result:SerialContextItem = null;
-        this._items.some((item)=>{
+    getById(id:string) : SerialContextItem | undefined{
+        let result:SerialContextItem | undefined;
+        this._items.some(item => {
             if (item.id == id){
                 result = item;
                 return true;
             }
+            return false;
         });
         return result;
     }
 
-    getByOrigObj(obj:Object):SerialContextItem{
-        let result:SerialContextItem = null;
-        this._items.some((item)=>{
+    getByOrigObj(obj:Object): SerialContextItem | undefined{
+        let result:SerialContextItem | undefined;
+        this._items.some(item => {
             if (item.origObj === obj){
                 result = item;
                 return true;
             }
+            return false;
         });
         return result;
     }
@@ -78,7 +80,7 @@ export class Serializer{
     public static deserialize<T>(str:string):T{
         let context = new SerializeContext(); 
         let inputObj = JSON.parse(str);
-        let refArray = [];
+        let refArray: ObjectRef[] = [];
         let mainObjId = inputObj.main;
         delete inputObj.main;
         Object.keys(inputObj).forEach((key:string)=>{
@@ -98,7 +100,7 @@ export class Serializer{
         if (!mainObj){
             throw new Error('Deserialize failed...Cannot find main object in string');
         }
-        return <T>(context.getById(mainObjId).origObj);
+        return <T>(mainObj.origObj);
     }
 }
 
@@ -124,13 +126,16 @@ function serializeSingleObject(object:Object, context:SerializeContext):string{
         })
     }
     let reg = SerializerRegistry.getClassRegistration(object.constructor);
-    let tgtObj:SerialObj = {"class":reg.name, "data":dataObj};
+    if (!reg) {
+        throw new Error(`Cannot find class reg for ${object.constructor.name}`);
+    }
+    let tgtObj:SerialObj = {"class": reg.name, "data":dataObj};
     context.putConvObj(objId, tgtObj);
     return objId;
 }
 
 function genId(context) {
-    let id:string;
+    let id: string | undefined;
     while(!id || context.getById(id) != null){
         id = uuid();
     }
@@ -153,6 +158,9 @@ function convertValueForSerialize(value:any, context:SerializeContext):any{
 function isFieldSerializable(object:Object, field:string):boolean{
     let value = object[field];
     let reg = SerializerRegistry.getClassRegistration(object.constructor);
+    if (!reg) {
+        throw new Error(`cannot find class registration for ${object.constructor.name}`);
+    }
     if (value === null || value === undefined){
         return false;
     }

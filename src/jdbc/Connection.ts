@@ -249,6 +249,10 @@ export class Connection {
     async setTypeMap(map) {
         throw new Error("NOT IMPLEMENTED");
     }
+
+    get native() {
+        return this._conn;
+    }
 }
 
 function allType(array, type) {

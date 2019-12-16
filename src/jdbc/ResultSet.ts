@@ -1,8 +1,7 @@
 import { Jinst } from "./Jinst";
 import { ResultSetMetaData } from "./ResultSetMetaData";
 import { TypeHandler } from "./TypeHandler";
-import { camelize as camalCase } from "../utils/Camelize";
-import { asyncForEach, toNumber } from "../utils/common-utils";
+import { concurrentExecute, camelize } from "@/utils";
 
 const java: any = Jinst.getInstance();
 
@@ -122,14 +121,14 @@ export class ResultSet {
                     return new param!.class!();
                 })) ||
             (() => new Object());
-        let camelize = (param && param.camelize) || false;
+        let needCamelize = (param && param.camelize) || false;
         // Get some column metadata.
-        await asyncForEach(
+        await concurrentExecute(
             range({ start: 1, end: colcount + 1 }), 1,
             async i => {
                 let fieldName = await rsmd.getColumnLabel(i);
-                if (camelize) {
-                    fieldName = camalCase(fieldName);
+                if (needCamelize) {
+                    fieldName = camelize(fieldName);
                 }
                 colsmetadata.push({
                     label: fieldName,
@@ -161,7 +160,7 @@ export class ResultSet {
     private async buildResult<T>(result: T, colsmetadata: any[]){
         let self = this;
         let colcount = colsmetadata.length;
-        await asyncForEach(range({
+        await concurrentExecute(range({
             start: 1,
             end: colcount + 1
         }), 1, async i => {
@@ -209,13 +208,13 @@ export class ResultSet {
                     return new param!.class!();
                 })) ||
             (() => new Object());
-        let camelize = (param && param.camelize) || false;
+        let needCamelize = (param && param.camelize) || false;
         // Get some column metadata.
-        asyncForEach(
+        concurrentExecute(
             range({ start: 1, end: colcount + 1 }), 1, async i => {
                 let fieldName = await rsmd.getColumnLabel(i);
-                if (camelize) {
-                    fieldName = camalCase(fieldName);
+                if (needCamelize) {
+                    fieldName = camelize(fieldName);
                 }
                 colsmetadata.push({
                     label: fieldName,

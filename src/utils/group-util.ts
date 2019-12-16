@@ -1,12 +1,13 @@
 import { Timer } from "./Timer";
-import { toNumber, copyObj } from "./common-utils";
+import { copyObj } from "./common-utils";
 import { GroupMap } from "./GroupMap";
+import { asFloat } from "./Types";
 
 type GroupCalculateFunc<T extends Object> = (array: T[], field: string) => any;
 export function sum<T extends Object>(array: T[], field: string): number {
     let result = 0;
     array.forEach(item => {
-        result += toNumber(item[field]);
+        result += asFloat(item[field]);
     });
     return result;
 }
@@ -20,11 +21,16 @@ export function max<T extends Object>(array: T[], field: string): number {
     if (array.length === 0) return 0;
     let max = 0;
     array.forEach(item => {
-        if (toNumber(item[field]) > max) {
+        if (asFloat(item[field]) > max) {
             max = item[field];
         }
     });
     return max;
+}
+
+export function join<T extends Object>(array: T[], field: string): string {
+    if (array.length === 0) return '';
+    return array.map(item => item[field]).join(',');
 }
 
 type CalculateFields<T> = { [fieldName: string]: GroupCalculateFunc<T> };
@@ -46,7 +52,6 @@ export function groupCalculate<T extends Object>({
         });
         groupMap.put(key, item);
     });
-    console.log("2..." + timer.lap);
     let result: T[] = [];
     groupMap.keys.forEach(key => {
         let values = groupMap.get(key);
@@ -60,7 +65,6 @@ export function groupCalculate<T extends Object>({
             })
         );
     });
-    console.log("3..." + timer.lap);
     return result;
 }
 

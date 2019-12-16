@@ -2,19 +2,19 @@ import * as Moment from "moment";
 import { O_WRONLY } from "constants";
 import * as fs from "fs";
 
-export function toNumber(v: any): number {
-    let num = Number(v);
-    if (isNaN(num)) return 0;
-    return num;
-}
+// export function toNumber(v: any): number {
+//     let num = Number(v);
+//     if (isNaN(num)) return 0;
+//     return num;
+// }
 
 export function isNumber(v: any): boolean {
     return !isNaN(Number(v));
 }
 
-export function toString(v: any): string {
-    return v ? String(v) : '';
-}
+// export function toString(v: any): string {
+//     return v ? String(v) : '';
+// }
 
 export function isFunction(v: any): boolean {
     return typeof v === "function";
@@ -33,11 +33,11 @@ export function copyObj<T extends Object>(obj: T): T {
     return cloneObj;
 }
 
-export function toDate(v: any): Date|undefined {
-    if (v) {
-        return Moment(v).toDate();
-    }
-}
+// export function toDate(v: any): Date|undefined {
+//     if (v) {
+//         return Moment(v).toDate();
+//     }
+// }
 
 export function defaultFormatDate(v: Date): String {
     return Moment(v).format("YYYY-MM-DD");

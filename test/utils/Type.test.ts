@@ -1,4 +1,4 @@
-import { string, integer, date, set, array } from "../../src/utils/Type";
+import { string, integer, date, set, array } from "@/utils/Types";
 
 class TmUser {
     @string userName: string;
@@ -9,7 +9,7 @@ class TmUser {
     @array positions: string[];
 }
 let tmUser = new TmUser();
-tmUser['userName'] = null;
+// tmUser['userName'] = null;
 Object.assign(tmUser, {
     userId: 'dadfa', 
     series: ['V90', 'V80', 'V80'],

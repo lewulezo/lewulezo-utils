@@ -1,6 +1,6 @@
 import { getTableMeta } from "./TableAnnotations";
-import { JDBC } from "../jdbc";
-import { concurrentExecute } from "../utils/ConcurrentExecutor";
+import { JDBC } from "@/jdbc";
+import { concurrentExecute } from "@/utils";
 
 type PoolConstructor = () => Promise<JDBC>;
 

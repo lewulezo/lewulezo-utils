@@ -1,5 +1,3 @@
-"use strict";
-
 export function decamelize(name: string, separator = "_") {
     return name
         .replace(/([a-z\d])([A-Z])/g, "$1" + separator + "$2")

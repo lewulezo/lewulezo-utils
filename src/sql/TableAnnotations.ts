@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { decamelize } from "../utils/Camelize";
+import { decamelize } from "@/utils/Camelize";
 
 type ValueConverter = (v: any) => any;
 
@@ -113,6 +113,8 @@ export function getTableMeta<T extends Object>(object: T): TableMeta<T> {
         tableMeta.sequenceName = tableDef.sequenceName;
         tableMeta.hasCreateDate = !!tableDef.hasCreateDate;
         tableMeta.hasUpdateDate = !!tableDef.hasUpdateDate;
+    } else {
+        tableDef = new TableMeta();
     }
 
     const ignoreFields: string[] =

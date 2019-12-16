@@ -11,7 +11,7 @@ export class SerializerRegistry {
     return registerTransiantField(clazz, fieldName);
   }
 
-  public static getClassRegistration(clazz:Function|string){
+  public static getClassRegistration(clazz:Function|string) :ClassRegistration | undefined {
     return getClassRegistration(clazz);
   }
 }
@@ -56,18 +56,19 @@ function registerTransiantField(clazz:Function, fieldName:string) {
   }
 }
 
-function getClassRegistration(clazz:Function|string):ClassRegistration{
+function getClassRegistration(clazz:Function|string): ClassRegistration | undefined{
   if (typeof clazz == 'string'){
     let className:string = <string>clazz;
     return classRegistry[className];
   } else {
-    let retVal:ClassRegistration = null;
-    Object.keys(classRegistry).some(name=>{
+    let retVal:ClassRegistration | undefined;
+    Object.keys(classRegistry).some(name =>{
       let reg = classRegistry[name];
       if (reg.clazz === clazz){
         retVal = reg;
         return true;
       }
+      return false;
     });
     return retVal;
   }
@@ -83,7 +84,7 @@ function generateAnonymousClassRegName(clazz:Function):string{
   return [funcName, Date.now(), uuid()].join('-');
 }
 
-function mergeArrayField(obj:Object, field:string, arr:any[]){
+function mergeArrayField(obj:Object, field:string, arr?:any[]){
   if (!arr) {
     return;
   }

@@ -1,6 +1,6 @@
-import { getTableMeta, FieldType, Table, Field } from "./TableAnnotations";
+import { getTableMeta, FieldType } from "@/sql";
+import { isFunction } from "@/utils";
 import * as Moment from "moment";
-import { isFunction } from "../utils/common-utils";
 
 export function generateInsertSql<T>(entity: T) {
     const tableMeta = getTableMeta(entity);

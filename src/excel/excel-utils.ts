@@ -1,12 +1,12 @@
 import * as Excel from "exceljs";
 import { Workbook, Worksheet, Cell, ValueType } from "exceljs";
+import * as moment from "moment";
 import {
     getColumnDefByColumnName,
     ColumnDef,
     getColumnDefs,
     getColumnDefByPropertyName
-} from "./ExcelAnnotations";
-import * as moment from "moment";
+} from "@/excel";
 
 const DATE_FORMAT = "YYYY-MM-DD";
 const SOURCE_FILE_PATH = "data";
