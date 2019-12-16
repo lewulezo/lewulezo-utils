@@ -1,7 +1,7 @@
 import { Jinst } from "./Jinst";
 import { ResultSetMetaData } from "./ResultSetMetaData";
 import { TypeHandler } from "./TypeHandler";
-import { concurrentExecute, camelize } from "@/utils";
+import { concurrentExecute, camelize } from "../utils";
 
 const java: any = Jinst.getInstance();
 

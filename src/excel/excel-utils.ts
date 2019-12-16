@@ -6,7 +6,7 @@ import {
     ColumnDef,
     getColumnDefs,
     getColumnDefByPropertyName
-} from "@/excel";
+} from "../excel";
 
 const DATE_FORMAT = "YYYY-MM-DD";
 const SOURCE_FILE_PATH = "data";

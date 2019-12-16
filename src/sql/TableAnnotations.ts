@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { decamelize } from "@/utils/Camelize";
+import { decamelize } from "../utils/Camelize";
 
 type ValueConverter = (v: any) => any;
 
