@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["*"]
     },
     "target": "ES6",
     "outDir": "dist/",
@@ -11,5 +11,6 @@
     "declaration": true,
     "experimentalDecorators": true,
     "strictNullChecks": true
-  }
+  },
+  "include": ["src/**/*"]
 }

@@ -11,6 +11,10 @@ import {
 const DATE_FORMAT = "YYYY-MM-DD";
 const SOURCE_FILE_PATH = "data";
 
+export const ExcelUtils = {
+    openWorkbook, createWorkbook, readWorkBook, writeWorkBook, importRecords, exportRecords
+}
+
 export async function openWorkbook(fileName: string): Promise<Workbook> {
     const workbook = new Workbook();
     let path = SOURCE_FILE_PATH + "/" + fileName;

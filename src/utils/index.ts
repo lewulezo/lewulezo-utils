@@ -11,4 +11,5 @@ export * from './prettyPrint';
 export * from './Serializer';
 export * from './StringBuffer';
 export * from './Timer';
+export * from './Types';
 export * from './uuid';

@@ -1,6 +1,6 @@
 {
   "name": "lewulezo-utils",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "some utils",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
