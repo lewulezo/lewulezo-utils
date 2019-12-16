@@ -1,7 +1,8 @@
 import { Jinst } from "./Jinst";
 import { ResultSetMetaData } from "./ResultSetMetaData";
 import { TypeHandler } from "./TypeHandler";
-import * as camalCase from "camelcase";
+import { camelize as camalCase } from "../utils/Camelize";
+import { asyncForEach, toNumber } from "../utils/common-utils";
 
 const java: any = Jinst.getInstance();
 
@@ -9,13 +10,13 @@ if (!Jinst.isJvmCreated()) {
     Jinst.addOption("-Xrs");
 }
 
-export interface ToObjectConfig<T> {
+export interface QueryConfig<T> {
     class?: new () => T;
     builder?: () => T;
     camelize?: boolean;
 }
 
-export interface ToObjectResult<T> {
+export interface QueryResult<T> {
     labels: string[];
     rows: T[];
     types: string[];
@@ -103,28 +104,12 @@ export class ResultSet {
         })();
     }
 
-    async toObjArray<T>(param?: ToObjectConfig<T>): Promise<T[]> {
-        let result: any = await this.toObject(param);
+    async getRows<T>(param?: QueryConfig<T>): Promise<T[]> {
+        let result: any = await this.getResult(param);
         return result.rows;
     }
 
-    async toObject<T>(param?: ToObjectConfig<T>): Promise<ToObjectResult<T>> {
-        let rs: any = await this.toObjectIter(param);
-
-        let rowIter = rs.rows;
-        let rows: any[] = [];
-        let row = rowIter.next();
-
-        while (!row.done) {
-            rows.push(row.value);
-            row = rowIter.next();
-        }
-
-        rs.rows = rows;
-        return rs;
-    }
-
-    async toObjectIter<T>(param?: ToObjectConfig<T>): Promise<Object> {
+    async getResult<T>(param?: QueryConfig<T>): Promise<QueryResult<T>> {
         let self = this;
         let rsmd: ResultSetMetaData = await self.getMetaData();
         let colsmetadata: any[] = [];
@@ -139,8 +124,9 @@ export class ResultSet {
             (() => new Object());
         let camelize = (param && param.camelize) || false;
         // Get some column metadata.
-        await Promise.all(
-            range({ start: 1, end: colcount + 1 }).map(async i => {
+        await asyncForEach(
+            range({ start: 1, end: colcount + 1 }), 1,
+            async i => {
                 let fieldName = await rsmd.getColumnLabel(i);
                 if (camelize) {
                     fieldName = camalCase(fieldName);
@@ -149,7 +135,93 @@ export class ResultSet {
                     label: fieldName,
                     type: await rsmd.getColumnType(i)
                 });
-            })
+            }
+        );
+
+        let rows: T[] = [];
+        let nextRow;
+        try {
+            nextRow = await self._rs.next$(); // this row can lead to Java RuntimeException - sould be cathced.
+            while (nextRow) {
+                let result = builder() as T;
+                await this.buildResult(result, colsmetadata);
+                rows.push(result);
+                nextRow = await self._rs.next$();
+            }
+        } catch (error) {
+            throw error;
+        }
+        return {
+            labels: colsmetadata.map(c => c.label),
+            types: colsmetadata.map(c => self._types[c.type]),
+            rows
+        };
+    }
+
+    private async buildResult<T>(result: T, colsmetadata: any[]){
+        let self = this;
+        let colcount = colsmetadata.length;
+        await asyncForEach(range({
+            start: 1,
+            end: colcount + 1
+        }), 1, async i => {
+            let cmd = colsmetadata[i - 1];
+            let type = self._types[cmd.type] || "String";
+            // let getter = "get" + type + "$";
+            let val = await self._rs.getObject$(i)
+            // console.log(`read field...${i}:${cmd.label}:${type}:${val}`)
+            if (
+                type === "Date" ||
+                type === "Time" ||
+                type === "Timestamp"
+            ) {
+                result[cmd.label] = val
+                    ? await TypeHandler.fromJavaDateAsync(val)
+                    : null;
+            } else if (type == "BigDecimal") {
+                result[cmd.label] = val
+                    ? await TypeHandler.fromJavaBigDecimalAsync(val)
+                    : null;
+            } else {
+                // If the column is an integer and is null, set result to null and continue
+                if (
+                    type === "Int" &&
+                    val !== null
+                ) {
+                    result[cmd.label] = null;
+                    return;
+                }
+                result[cmd.label] = val;
+            }
+        });
+    }
+
+    async toObjectIter<T>(param?: QueryConfig<T>): Promise<Object> {
+        let self = this;
+        let rsmd: ResultSetMetaData = await self.getMetaData();
+        let colsmetadata: any[] = [];
+        let colcount = await rsmd.getColumnCount();
+        let builder =
+            (param && param.builder) ||
+            (param &&
+                param.class &&
+                (() => {
+                    return new param!.class!();
+                })) ||
+            (() => new Object());
+        let camelize = (param && param.camelize) || false;
+        // Get some column metadata.
+        asyncForEach(
+            range({ start: 1, end: colcount + 1 }), 1, async i => {
+                let fieldName = await rsmd.getColumnLabel(i);
+                if (camelize) {
+                    fieldName = camalCase(fieldName);
+                }
+                colsmetadata.push({
+                    label: fieldName,
+                    type: await rsmd.getColumnType(i)
+                });
+            }
         );
 
         return {

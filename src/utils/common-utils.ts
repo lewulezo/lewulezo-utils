@@ -1,4 +1,4 @@
-import Moment from "moment";
+import * as Moment from "moment";
 import { O_WRONLY } from "constants";
 import * as fs from "fs";
 
@@ -10,6 +10,10 @@ export function toNumber(v: any): number {
 
 export function isNumber(v: any): boolean {
     return !isNaN(Number(v));
+}
+
+export function toString(v: any): string {
+    return v ? String(v) : '';
 }
 
 export function isFunction(v: any): boolean {
@@ -29,8 +33,10 @@ export function copyObj<T extends Object>(obj: T): T {
     return cloneObj;
 }
 
-export function toDate(v: any): Date {
-    return Moment(v).toDate();
+export function toDate(v: any): Date|undefined {
+    if (v) {
+        return Moment(v).toDate();
+    }
 }
 
 export function defaultFormatDate(v: Date): String {
@@ -56,4 +62,24 @@ export async function appendFile(fileName: string, content: string) {
     let fileHandler = await fs.promises.open(fileName, O_WRONLY);
     fileHandler.appendFile(content);
     await fileHandler.close();
+}
+
+export function numberToFixedString(n: number, length: number) {
+    if (length <= 0) {
+        return "";
+    }
+    return String(Math.pow(10, length) + n).substring(1);
+}
+
+
+export async function wait(time: number) {
+    return new Promise((resolve, reject) => setTimeout(resolve, time));
+}
+
+export function range({ start = 0, end }): number[] {
+    let arr: number[] = [];
+    for (let i = start; i < end; i++) {
+        arr.push(i);
+    }
+    return arr;
 }

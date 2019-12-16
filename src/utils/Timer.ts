@@ -2,11 +2,15 @@ export class Timer {
     private _startTime: number;
     private _lastLap: number;
     constructor() {
+        this.start();
+    }
+
+    start() {
         this._startTime = Date.now();
         this._lastLap = this._startTime;
     }
 
-    get stop() : number {
+    get lap() : number {
         const now = Date.now();
         const lastTime = now - this._lastLap;
         this._lastLap = now;

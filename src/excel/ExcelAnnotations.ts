@@ -1,6 +1,7 @@
 import "reflect-metadata";
 
 const columnKey = Symbol("Column");
+// const excelPropertiesKey = Symbol("ExcelProperties");
 const columnMappingKey = Symbol("ColumnMapping");
 
 type ValueConverter = (v: any) => any;
@@ -14,11 +15,11 @@ export class ColumnDef {
 }
 
 //Annotation
-export function Column(
+export function Column (
     value: string,
     readConverter?: ValueConverter,
     writeConverter?: ValueConverter
-) {
+): PropertyDecorator {
     return function(target: Object, propertyKey: string) {
         registerColumnName(
             target,

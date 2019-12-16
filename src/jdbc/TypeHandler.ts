@@ -17,6 +17,11 @@ export namespace TypeHandler {
         return new Date(Number(date.getTimeSync().longValue));
     }
 
+    export async function fromJavaDateAsync(date): Promise<Date> {
+        let time = await date.getTime$();
+        return new Date(Number(time.longValue));
+    }
+
     export function toJavaSqlTime(time: Date) {
         return java.newInstanceSync(
             "java.sql.Time",
@@ -28,12 +33,21 @@ export namespace TypeHandler {
         return new Date(Number(time.getTimeSync().longValue));
     }
 
+    export async function fromJavaSqlTimeAsync(time): Promise<Date> {
+        let val = await time.getTime$();
+        return new Date(Number(val.longValue));
+    }
+
     export function toJavaByte(byte: number) {
         return java.newByte(byte);
     }
 
     export function fromJavaByte(byte): number {
         return byte.byteValueSync();
+    }
+
+    export async function fromJavaByteAsync(byte): Promise<number> {
+        return await byte.byteValue$();
     }
 
     export function toJavaBytes(buf: Buffer) {
@@ -58,6 +72,10 @@ export namespace TypeHandler {
 
     export function fromJavaBigDecimal(bigDecimal): number {
         return bigDecimal.doubleValueSync();
+    }
+
+    export async function fromJavaBigDecimalAsync(bigDecimal): Promise<number> {
+        return await bigDecimal.doubleValue$();
     }
 
     export function toJavaProperties(object: Object) {

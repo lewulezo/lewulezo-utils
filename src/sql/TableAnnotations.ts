@@ -16,8 +16,9 @@ export enum FieldType {
 }
 
 class TableDef {
+    schema?: string;
     tableName: string;
-    defaultInclude? = true;
+    defaultInclude? = false;
     sequenceName?: string;
     hasCreateDate? = false;
     hasUpdateDate? = false;
@@ -32,16 +33,16 @@ class FieldDef {
 
 type ConstructorFunction<T extends Object> = new (...args: any[]) => T;
 
-export function Table<T>(tableDef: TableDef) {
+export function Table(tableDef: TableDef): ClassDecorator {
     if (tableDef.defaultInclude === undefined) {
         tableDef.defaultInclude = true;
     }
-    return function(constructor: ConstructorFunction<T>) {
-        Reflect.metadata(TABLE_KEY, tableDef)(constructor);
+    return function<TFunction extends Function>(target: TFunction) {
+        Reflect.metadata(TABLE_KEY, tableDef)(target);
     };
 }
 
-export function Field<T>(fieldDef?) {
+export function Field<T>(fieldDef?): PropertyDecorator {
     return function(target: T, propName: string) {
         fieldDef = fieldDef || {};
         let fieldName = fieldDef.fieldName || getFieldName(propName);
@@ -51,7 +52,7 @@ export function Field<T>(fieldDef?) {
     };
 }
 
-export function IgnoreField<T>(target: T, propName: string) {
+export const IgnoreField: PropertyDecorator = <T extends Object>(target: T, propName: string) => {
     const clazz = target.constructor as ConstructorFunction<T>;
     let fieldList: string[] =
         Reflect.getMetadata(IGNORED_FIELDS_KEY, clazz) || [];
@@ -59,7 +60,7 @@ export function IgnoreField<T>(target: T, propName: string) {
     Reflect.metadata(IGNORED_FIELDS_KEY, fieldList)(clazz);
 }
 
-function registerFieldDef<T>(
+function registerFieldDef<T extends Object>(
     target: T,
     propName: string,
     fieldName: string,
@@ -84,6 +85,7 @@ function registerFieldDef<T>(
 }
 
 class TableMeta<T> {
+    schema?: string;
     tableName: string;
     fields: Map<string, FieldDef>;
     primaryKey?: FieldDef;
@@ -101,11 +103,12 @@ class TableMeta<T> {
     }
 }
 
-export function getTableMeta<T>(object: T): TableMeta<T> {
+export function getTableMeta<T extends Object>(object: T): TableMeta<T> {
     const clazz = object.constructor as ConstructorFunction<T>;
     const tableMeta = new TableMeta();
     let tableDef = Reflect.getMetadata(TABLE_KEY, clazz);
     if (tableDef) {
+        tableMeta.schema = tableDef.schema || "";
         tableMeta.tableName = tableDef.tableName;
         tableMeta.sequenceName = tableDef.sequenceName;
         tableMeta.hasCreateDate = !!tableDef.hasCreateDate;

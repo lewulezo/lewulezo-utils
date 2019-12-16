@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 import * as util from "util";
 import * as java from "java";
+import * as winston from "winston";
 
 java["async" + "Options"] = {
     asyncSuffix: "",
@@ -18,13 +19,13 @@ export namespace Jinst {
         if (!isJvmCreated() && option) {
             java.options.push(option);
         } else if (isJvmCreated()) {
-            console.error(
+            winston.error(
                 "You've tried to add an option to an already running JVM!"
             );
-            console.error(
+            winston.error(
                 "This isn't currently supported.  Please add all option entries before calling any java methods"
             );
-            console.error(
+            winston.error(
                 "You can test for a running JVM with the isJvmCreated funtion."
             );
         }
@@ -34,13 +35,13 @@ export namespace Jinst {
         if (!isJvmCreated() && dependencyArr) {
             java.classpath.push.apply(java.classpath, dependencyArr);
         } else if (isJvmCreated()) {
-            console.error(
+            winston.error(
                 "You've tried to add an entry to the classpath of an already running JVM!"
             );
-            console.error(
+            winston.error(
                 "This isn't currently supported.  Please add all classpath entries before calling any java methods"
             );
-            console.error(
+            winston.error(
                 "You can test for a running JVM with the isJvmCreated funtion."
             );
         }

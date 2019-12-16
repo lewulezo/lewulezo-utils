@@ -46,7 +46,7 @@ export function groupCalculate<T extends Object>({
         });
         groupMap.put(key, item);
     });
-    console.log("2..." + timer.stop);
+    console.log("2..." + timer.lap);
     let result: T[] = [];
     groupMap.keys.forEach(key => {
         let values = groupMap.get(key);
@@ -60,7 +60,7 @@ export function groupCalculate<T extends Object>({
             })
         );
     });
-    console.log("3..." + timer.stop);
+    console.log("3..." + timer.lap);
     return result;
 }
 

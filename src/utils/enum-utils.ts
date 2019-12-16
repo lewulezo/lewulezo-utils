@@ -1,4 +1,4 @@
-import { isNumber, isFunction } from ".";
+import { isNumber, isFunction } from "./common-utils";
 
 export function listNames(enumType: any): string[] {
     return Object.keys(enumType).filter(

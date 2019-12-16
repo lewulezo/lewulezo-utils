@@ -5,10 +5,7 @@
     "outDir": "dist/",
     "sourceMap": true,
     "declaration": true,
-    "experimentalDecorators": true
-  },
-  "files": [
-    "src/utils/index.ts",
-    "test/utils/index.ts"
-  ]
+    "experimentalDecorators": true,
+    "strictNullChecks": true
+  }
 }
