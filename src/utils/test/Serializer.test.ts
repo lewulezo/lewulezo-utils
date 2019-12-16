@@ -1,4 +1,4 @@
-import { Serializer, Serializable, transiant } from '@/utils/Serializer';
+import { Serializer, Serializable, transiant } from '../Serializer';
 
 function test(){
   @Serializable()
