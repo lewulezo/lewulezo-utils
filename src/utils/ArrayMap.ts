@@ -1,3 +1,5 @@
+import {Optional} from "@/sql";
+
 type EqFunc<T> = (t1: T, t2: T) => boolean;
 interface Entry<K, V> {
     key: K;
@@ -34,9 +36,9 @@ export class ArrayMap<K, V> {
         return this._entries.some(entry => equalsFn(entry.key, key));
     }
 
-    get(key: K): V | undefined {
+    get(key: K): Optional<V> {
         let equalsFn = this.equalsFn;
-        let value: V | undefined = undefined;
+        let value: Optional<V>;
         this._entries.some(entry => {
             if (equalsFn(entry.key, key)) {
                 value = entry.value;

@@ -1,5 +1,5 @@
-import { getTableMeta, FieldType } from "../sql";
-import { isFunction } from "../utils";
+import {getTableMeta, FieldType, Optional} from "../sql";
+import {isFunction} from "../utils";
 import * as Moment from "moment";
 
 export function generateInsertSql<T>(entity: T) {
@@ -20,7 +20,7 @@ export function generateInsertSql<T>(entity: T) {
             fieldValue =
                 getTableName(tableMeta.schema, tableMeta.sequenceName) +
                 `.NEXTVAL`;
-        } else if (tableMeta.hasCreateDate && fieldName == 'CREATE_DATE' && entity['createDate'] === undefined){
+        } else if (tableMeta.hasCreateDate && fieldName == 'CREATE_DATE' && entity['createDate'] === undefined) {
             fieldValue = 'SYSDATE';
         } else {
             fieldValue = getSqlValue(entity[propName], fieldDef.type!);
@@ -68,7 +68,7 @@ export function generateUpdateSql<T>(entity: T, whereProps: string[] = []) {
             throw new Error("PK value is null!!");
         }
         whereItems.push({fieldName: pkFieldName, fieldValue: pkFieldValue});
-    } 
+    }
 
     for (let fieldEntry of tableMeta.fields) {
         let propName = fieldEntry[0];
@@ -76,13 +76,13 @@ export function generateUpdateSql<T>(entity: T, whereProps: string[] = []) {
         if (fieldDef.isPrimaryKey) {
             continue;
         }
-        if (tableMeta.hasUpdateDate && propName == 'updateDate' && entity['updateDate'] === undefined){
+        if (tableMeta.hasUpdateDate && propName == 'updateDate' && entity['updateDate'] === undefined) {
             setItems.push({
                 fieldName: 'UPDATE_DATE',
                 fieldValue: 'SYSDATE'
             })
         }
-        
+
         if (entity[propName] === undefined) {
             continue;
         }
@@ -98,7 +98,7 @@ export function generateUpdateSql<T>(entity: T, whereProps: string[] = []) {
             });
         }
     }
-    if (tableMeta.hasUpdateDate && !setItems.find(item => item.fieldName == 'UPDATE_DATE') ) {
+    if (tableMeta.hasUpdateDate && !setItems.find(item => item.fieldName == 'UPDATE_DATE')) {
         setItems.push({
             fieldName: "UPDATE_DATE",
             fieldValue: "SYSDATE"
@@ -106,7 +106,7 @@ export function generateUpdateSql<T>(entity: T, whereProps: string[] = []) {
     }
 
     return (
-        `UPDATE ${tableName} \n` + 
+        `UPDATE ${tableName} \n` +
         `SET ${setItems.map(outputSetItem).join(", ")} \n` +
         (whereItems.length
             ? "WHERE " + whereItems.map(outputWhereItem).join(" AND ")
@@ -125,8 +125,8 @@ export function generateSelectSql<T>(entity: T, selectProps?: string[]): string 
         let propName = fieldEntry[0];
         let fieldDef = fieldEntry[1];
         let fieldName = fieldDef.fieldName!;
-        if (selectProps)  {
-            if (selectProps.indexOf(propName) != -1)  {
+        if (selectProps) {
+            if (selectProps.indexOf(propName) != -1) {
                 fieldNames.push(fieldName);
             }
         } else {
@@ -186,7 +186,7 @@ function getSqlValue(value: any, fieldType: FieldType): string {
         }
         case FieldType.VARCHAR: {
             if (isFunction(value.replace)) {
-                value  = value.replace(/\'/g, "''");
+                value = value.replace(/\'/g, "''");
             }
             return `'${value}'`;
         }
@@ -199,7 +199,7 @@ function getSqlValue(value: any, fieldType: FieldType): string {
     }
 }
 
-function getTableName(schema: string | undefined, tableName: string) {
+function getTableName(schema: Optional<string>, tableName: string) {
     tableName = tableName || "${TABLE_NAME}";
     return schema ? `${schema}.${tableName}` : tableName;
 }

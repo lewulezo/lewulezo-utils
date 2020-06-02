@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import {Optional} from "@/sql";
 
 const columnKey = Symbol("Column");
 // const excelPropertiesKey = Symbol("ExcelProperties");
@@ -15,36 +16,16 @@ export class ColumnDef {
 }
 
 //Annotation
-export function Column (
-    value: string,
-    readConverter?: ValueConverter,
-    writeConverter?: ValueConverter
-): PropertyDecorator {
+export function Column (value: string, readConverter?: ValueConverter, writeConverter?: ValueConverter): PropertyDecorator {
     return function(target: Object, propertyKey: string) {
-        registerColumnName(
-            target,
-            propertyKey,
-            value,
-            readConverter,
-            writeConverter
-        );
+        registerColumnName(target, propertyKey, value, readConverter, writeConverter);
     };
 }
 
-export function registerColumnName(
-    target: Object,
-    propName: string,
-    columnName: string,
-    readConverter?: ValueConverter,
-    writeConverter?: ValueConverter
-) {
+export function registerColumnName(target: Object, propName: string, columnName: string,
+                                   readConverter?: ValueConverter, writeConverter?: ValueConverter) {
     const clazz = target.constructor;
-    let columeDef = new ColumnDef(
-        columnName,
-        propName,
-        readConverter,
-        writeConverter
-    );
+    let columeDef = new ColumnDef(columnName, propName, readConverter, writeConverter);
     Reflect.metadata(columnKey, columeDef)(target, propName);
     // let excelProperties: string[] =
     //     Reflect.getMetadata(excelPropertiesKey, target) || [];
@@ -58,10 +39,7 @@ export function registerColumnName(
 
 export function getColumnDefs(target: any): ColumnDef[] {
     let clazz = target.constructor;
-    let columnMap: Map<string, ColumnDef> = Reflect.getMetadata(
-        columnMappingKey,
-        clazz
-    );
+    let columnMap: Map<string, ColumnDef> = Reflect.getMetadata(columnMappingKey, clazz);
     if (!columnMap) {
         return [];
     }
@@ -72,38 +50,23 @@ export function getColumnDefs(target: any): ColumnDef[] {
     return columnDefs;
 }
 
-export function getColumnName(
-    target: any,
-    propName: string
-): string | undefined {
+export function getColumnName(target: any, propName: string): Optional<string> {
     let columnDef = getColumnDefByPropertyName(target, propName);
     return columnDef ? columnDef.columnName : undefined;
 }
 
-export function getPropName(
-    target: any,
-    columnName: string
-): string | undefined {
+export function getPropName(target: any, columnName: string): Optional<string> {
     let columnDef = getColumnDefByColumnName(target, columnName);
     return columnDef ? columnDef.propName : undefined;
 }
 
-export function getColumnDefByPropertyName(
-    target: any,
-    propName: string
-): ColumnDef {
+export function getColumnDefByPropertyName(target: any, propName: string): ColumnDef {
     return Reflect.getMetadata(columnKey, target, propName);
 }
 
-export function getColumnDefByColumnName(
-    target: any,
-    columnName: string
-): ColumnDef | undefined {
+export function getColumnDefByColumnName(target: any, columnName: string ): Optional<ColumnDef> {
     let clazz = target.constructor;
-    let columnMapping: Map<string, ColumnDef> = Reflect.getMetadata(
-        columnMappingKey,
-        clazz
-    );
+    let columnMapping: Map<string, ColumnDef> = Reflect.getMetadata(columnMappingKey, clazz);
     if (!columnMapping) {
         return undefined;
     }

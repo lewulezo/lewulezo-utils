@@ -3,6 +3,7 @@ import { Jinst } from "./Jinst";
 import { DriverManager, ConnectionConfig } from "./DriverManager";
 import { Connection } from "./Connection";
 import { ConnectionContext } from "./ConnectionContext";
+import {Optional} from "@/sql";
 
 const java = Jinst.getInstance();
 
@@ -123,7 +124,7 @@ export class Pool {
 
     async getConnection(): Promise<Connection> {
         let self = this;
-        let result: ConnectionContext | undefined;
+        let result: Optional<ConnectionContext>;
         await self.closeIdleConnections();
 
         result = self._pool.find(connCtx => !connCtx.reserved);
