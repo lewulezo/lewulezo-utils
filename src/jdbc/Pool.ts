@@ -3,7 +3,7 @@ import { Jinst } from "./Jinst";
 import { DriverManager, ConnectionConfig } from "./DriverManager";
 import { Connection } from "./Connection";
 import { ConnectionContext } from "./ConnectionContext";
-import {Optional} from "@/sql";
+import {Optional} from "../utils";
 
 const java = Jinst.getInstance();
 
@@ -173,8 +173,8 @@ export class Pool {
 
     returnConnection(conn: Connection) {
         let self = this;
-        let connCtx = self._pool.find(connCtx => {
-            return connCtx.conn == conn;
+        let connCtx = self._pool.find(connContext => {
+            return connContext.conn == conn;
         });
         if (!connCtx) {
             throw new Error("Cannot find connection to release");

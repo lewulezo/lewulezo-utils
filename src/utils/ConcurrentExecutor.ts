@@ -13,7 +13,7 @@ export class PromiseTask<T>{
 }
 
 export class ConcurrentExecutor<T> extends Observable {
-	private _capacity: number;
+	private readonly _capacity: number;
 	private currentIndex = 0;
 	private currentTaskId = 0;
 	private concurrentCount = 0;
@@ -79,5 +79,5 @@ export class ConcurrentExecutor<T> extends Observable {
 export async function concurrentExecute<T, R>(array: T[], capacity: number, fn: (item: T) => Promise<R>): Promise<R[]> {
 	const tasks = array.map(item => new PromiseTask(() => fn(item)));
 	let executor = new ConcurrentExecutor<R>(capacity);
-	return await executor.execute(tasks);
+	return executor.execute(tasks);
 }

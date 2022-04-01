@@ -1,5 +1,5 @@
 import {uuid} from './uuid';
-import {Optional} from "@/sql";
+import {Optional} from "./Optional";
 
 const classRegistry: { [key: string]: ClassRegistration } = {};
 
@@ -8,8 +8,8 @@ export class SerializerRegistry {
         return registerClass(clazz, name, ignoreFields);
     }
 
-    public static registerTransiantField(clazz: Function, fieldName: string) {
-        return registerTransiantField(clazz, fieldName);
+    public static registerTransientField(clazz: Function, fieldName: string) {
+        return registerTransientField(clazz, fieldName);
     }
 
     public static getClassRegistration(clazz: Function | string): Optional<ClassRegistration> {
@@ -48,7 +48,7 @@ function registerClass(clazz: Function, name?: string, ignoredFields?: string[])
     return reg;
 }
 
-function registerTransiantField(clazz: Function, fieldName: string) {
+function registerTransientField(clazz: Function, fieldName: string) {
     let reg = getClassRegistration(clazz);
     if (!reg) {
         reg = registerClass(clazz);
@@ -60,8 +60,7 @@ function registerTransiantField(clazz: Function, fieldName: string) {
 
 function getClassRegistration(clazz: Function | string): Optional<ClassRegistration> {
     if (typeof clazz == 'string') {
-        let className: string = <string>clazz;
-        return classRegistry[className];
+        return classRegistry[clazz];
     } else {
         let retVal: Optional<ClassRegistration>;
         Object.keys(classRegistry).some(name => {
@@ -79,7 +78,7 @@ function getClassRegistration(clazz: Function | string): Optional<ClassRegistrat
 function generateAnonymousClassRegName(clazz: Function): string {
     let funcName = clazz['name'];
     if (!funcName) {
-        let funcName = clazz.toString();
+        funcName = clazz.toString();
         funcName = funcName.substr(9);
         funcName = funcName.substr(0, funcName.indexOf('('));
     }

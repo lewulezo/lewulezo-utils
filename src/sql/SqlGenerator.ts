@@ -1,5 +1,5 @@
-import {getTableMeta, FieldType, Optional} from "../sql";
-import {isFunction} from "../utils";
+import {getTableMeta, FieldType} from "@/sql";
+import {isFunction, Optional} from "../utils";
 import * as Moment from "moment";
 
 export function generateInsertSql<T>(entity: T) {

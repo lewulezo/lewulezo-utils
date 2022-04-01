@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import {Optional} from "@/sql";
+import {Optional} from "../utils";
 
 const columnKey = Symbol("Column");
 // const excelPropertiesKey = Symbol("ExcelProperties");

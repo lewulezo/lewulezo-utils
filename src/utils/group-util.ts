@@ -1,4 +1,3 @@
-import { Timer } from "./Timer";
 import { copyObj } from "./common-utils";
 import { GroupMap } from "./GroupMap";
 import { asFloat } from "./Types";
@@ -19,13 +18,13 @@ export function average<T extends Object>(array: T[], field: string): number {
 
 export function max<T extends Object>(array: T[], field: string): number {
     if (array.length === 0) return 0;
-    let max = 0;
+    let maxNumber = 0;
     array.forEach(item => {
-        if (asFloat(item[field]) > max) {
-            max = item[field];
+        if (asFloat(item[field]) > maxNumber) {
+            maxNumber = item[field];
         }
     });
-    return max;
+    return maxNumber;
 }
 
 export function join<T extends Object>(array: T[], field: string): string {
@@ -43,7 +42,6 @@ export function groupCalculate<T extends Object>({
     by: string[];
     calculate: CalculateFields<T>;
 }): T[] {
-    const timer = new Timer();
     let groupMap = new GroupMap<any, T>();
     array.forEach(item => {
         let key = {};

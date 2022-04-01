@@ -157,5 +157,3 @@ export function getTableMeta<T extends Object>(object: T): TableMeta<T> {
 function getFieldName(propName: string): string {
     return CAMELIZE ? decamelize(propName).toUpperCase() : propName;
 }
-
-export type Optional<T> = T | undefined

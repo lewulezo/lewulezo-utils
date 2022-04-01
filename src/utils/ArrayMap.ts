@@ -1,4 +1,4 @@
-import {Optional} from "@/sql";
+import {Optional} from ".";
 
 type EqFunc<T> = (t1: T, t2: T) => boolean;
 interface Entry<K, V> {
@@ -7,7 +7,7 @@ interface Entry<K, V> {
 }
 
 export class ArrayMap<K, V> {
-    private _entries: Entry<K, V>[];
+    private readonly _entries: Entry<K, V>[];
 
     constructor(public equalsFn: EqFunc<K> = (k1: K, k2: K) => k1 === k2) {
         this._entries = [];

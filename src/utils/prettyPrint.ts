@@ -68,8 +68,8 @@ class Grid {
         }
         output.append("\n");
         //output head separate
-        for (let c = 0; c < colMaxLens.length; c++) {
-            output.append(stringRightPad("", colMaxLens[c], "-"));
+        for (let char of colMaxLens) {
+            output.append(stringRightPad("", char, "-"));
             output.append(separator);
         }
         output.append("\n");

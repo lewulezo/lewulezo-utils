@@ -1,5 +1,5 @@
 import {isNumber, isFunction} from "./common-utils";
-import {Optional} from "@/sql";
+import {Optional} from ".";
 
 export function listNames(enumType: any): string[] {
     return Object.keys(enumType).filter(

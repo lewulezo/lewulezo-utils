@@ -7,6 +7,7 @@ export * from './GroupMap';
 export * from './group-util';
 export * from './Logger';
 export * from './Observable';
+export * from './Optional';
 export * from './prettyPrint';
 export * from './Serializer';
 export * from './StringBuffer';

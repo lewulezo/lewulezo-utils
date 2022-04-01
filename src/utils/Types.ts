@@ -73,7 +73,7 @@ export function asArray(v: any): any[] {
     }
     if (v instanceof Array) {
         return v;
-    } 
+    }
     if (typeof v == 'string') {
         return [v];
     }

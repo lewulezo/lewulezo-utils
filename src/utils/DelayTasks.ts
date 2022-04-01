@@ -1,6 +1,6 @@
 export class DelayTasks {
-    private timeoutTasks: { [key: string]: number | NodeJS.Timeout };
-    private intervalTasks: { [key: string]: number | NodeJS.Timeout };
+    private readonly timeoutTasks: { [key: string]: number | NodeJS.Timeout };
+    private readonly intervalTasks: { [key: string]: number | NodeJS.Timeout };
 
     private logError = false;
 

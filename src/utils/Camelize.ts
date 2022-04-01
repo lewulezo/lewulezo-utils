@@ -12,7 +12,7 @@ export function camelize(input: string | string[], options?) {
         options.pascalCase ? x.charAt(0).toUpperCase() + x.slice(1) : x;
 
     if (Array.isArray(input)) {
-        input = (input as string[])
+        input = input
             .map(x => x.trim())
             .filter(x => x.length)
             .join("-");

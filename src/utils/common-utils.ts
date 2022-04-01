@@ -39,7 +39,7 @@ export function copyObj<T extends Object>(obj: T): T {
 //     }
 // }
 
-export function defaultFormatDate(v: Date): String {
+export function defaultFormatDate(v: Date): string {
     return Moment(v).format("YYYY-MM-DD");
 }
 
@@ -52,15 +52,14 @@ export async function asyncForEach<T>(
     for (let i = 0; i < array.length; i += concurrent) {
         subArrays.push(array.slice(i, i + concurrent));
     }
-    for (let j = 0; j < subArrays.length; j++) {
-        let subArray = subArrays[j];
+    for (let subArray of subArrays) {
         await Promise.all(subArray.map(item => fn(item)));
     }
 }
 
 export async function appendFile(fileName: string, content: string) {
     let fileHandler = await fs.promises.open(fileName, O_WRONLY);
-    fileHandler.appendFile(content);
+    await fileHandler.appendFile(content);
     await fileHandler.close();
 }
 

@@ -1,6 +1,5 @@
 import {SerializerRegistry, defaultClassRegistration} from './SerializerRegistry';
-import {uuid} from './uuid';
-import {Optional} from "@/sql";
+import {uuid, Optional} from ".";
 
 interface SerialObj {
     "class": string;
@@ -239,7 +238,7 @@ export function Serializable(name?: string, ignoreFields?: string[]) {
 }
 
 export function transiant(target: any, fieldName: string) {
-    SerializerRegistry.registerTransiantField(target.constructor, fieldName);
+    SerializerRegistry.registerTransientField(target.constructor, fieldName);
 }
 
 export default Serializer;
